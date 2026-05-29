@@ -1,0 +1,11 @@
+### 상품 검색 API
+GET http://localhost:8081/catalog/search?keyword="셔츠"&page=0
+Content-Type: application/json
+
+### 상품 Id로 옵션 전체 조회 API
+GET http://localhost:8081/catalog/variants?productId=1
+Content-Type: application/json
+
+### 상품 디테일 조회 API
+GET http://localhost:8081/catalog/detail?productId=1
+Content-Type: application/json
