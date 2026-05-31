@@ -10,10 +10,10 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Table(
-        name = "products",
-        indexes = {
-                @Index(name = "idx_status_name", columnList = "status, name"),
-        }
+        name = "products"
+//        indexes = {
+//                @Index(name = "idx_status_name", columnList = "status, name"),
+//        }
 )
 public class ProductEntity {
     @Id

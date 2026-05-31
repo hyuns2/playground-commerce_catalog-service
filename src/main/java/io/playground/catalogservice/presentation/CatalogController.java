@@ -1,20 +1,17 @@
 package io.playground.catalogservice.presentation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.playground.catalogservice.application.dto.CatalogDto;
 import io.playground.catalogservice.application.dto.ProductSearchResult;
 import io.playground.catalogservice.application.usecase.CatalogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/catalog")
 @RequiredArgsConstructor
 public class CatalogController {
     private final CatalogService catalogService;
@@ -29,7 +26,7 @@ public class CatalogController {
     }
 
     @GetMapping("/variants")
-    public ResponseEntity<List<CatalogDto.VariantInfo>> getVariants(@RequestParam Long productId) throws JsonProcessingException {
+    public ResponseEntity<List<CatalogDto.VariantInfo>> getVariants(@RequestParam Long productId) {
         return ResponseEntity.ok().body(
                 catalogService.getVariants(productId)
         );
