@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
         url = "${api.internal.inventory-service.url}"
 )
 public interface InventoryFeignClient {
-    @GetMapping("/stocks")
+    @GetMapping("/stocks-info")
     ResponseEntity<?> getStocks(@RequestParam Long productId);
 }

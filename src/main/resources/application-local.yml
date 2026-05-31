@@ -46,7 +46,7 @@ spring:
 api:
   internal:
     inventory-service:
-      url: ${INVENTORY_HOST}:${INVENTORY_PORT}/client
+      url: http://${INVENTORY_HOST}:${INVENTORY_PORT}/client
 
 logging:
   level:
