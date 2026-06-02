@@ -23,11 +23,11 @@ public class CatalogService {
     private final VariantPersistencePort variantPersistence;
     private final InventoryClientPort inventoryClient;
     private final JsonUtil jsonUtil;
-    private final static int PAGE_SIZE = 50;
+    private final static int PAGE_SIZE = 20;
 
     /**
      * 상품 검색
-     *  - 페이지당 50개씩 조회
+     *  - 페이지당 20개씩 조회
      *  - 페이지 번호는 0부터 시작
      *
      * @param keyword 검색어
