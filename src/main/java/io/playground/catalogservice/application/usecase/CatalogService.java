@@ -4,8 +4,6 @@ import io.playground.catalogservice.application.dto.CatalogDto;
 import io.playground.catalogservice.application.dto.ProductSearchResult;
 import io.playground.catalogservice.application.port.InventoryClientPort;
 import io.playground.catalogservice.application.port.ProductPersistencePort;
-import io.playground.catalogservice.application.port.VariantPersistencePort;
-import io.playground.catalogservice.domain.Variant;
 import io.playground.catalogservice.exception.BusinessDetailException;
 import io.playground.catalogservice.exception.BusinessErrorCode;
 import io.playground.catalogservice.infrastructure.util.JsonUtil;
@@ -20,7 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CatalogService {
     private final ProductPersistencePort productPersistence;
-    private final VariantPersistencePort variantPersistence;
+    private final CatalogTxService catalogTxService;
     private final InventoryClientPort inventoryClient;
     private final JsonUtil jsonUtil;
     private final static int PAGE_SIZE = 20;
@@ -43,47 +41,6 @@ public class CatalogService {
     }
 
     /**
-     * 특정 상품의 모든 옵션 조회
-     *
-     * @param productId 상품 ID
-     */
-    @Transactional(readOnly = true)
-    public List<CatalogDto.VariantInfo> getVariants(Long productId) {
-        Map<Long, Integer> stocks = inventoryClient
-                .findStockInfosByProductId(productId);
-        List<Variant> variants = variantPersistence
-                .findAllByProductId(productId);
-
-        if (variants.isEmpty())
-            throw new BusinessDetailException(
-                    BusinessErrorCode.PRODUCT_NOT_FOUND,
-                    jsonUtil.toJson(
-                            Map.of("productId", productId)
-                    )
-            );
-
-        if (variants.size() != stocks.size())
-            throw new BusinessDetailException(
-                    BusinessErrorCode.VARIANT_STOCK_MISMATCH,
-                    jsonUtil.toJson(
-                            Map.of(
-                                    "variantIds",
-                                    variants.stream()
-                                            .filter(v -> !stocks.containsKey(v.getId()))
-                                            .toList()
-                            )
-                    )
-            );
-
-        return variants.stream()
-                .map(v ->
-                        CatalogDto.VariantInfo.from(
-                                v, stocks.get(v.getId())
-                        )
-                ).toList();
-    }
-
-    /**
      * 특정 상품의 상세페이지 조회
      *
      * @param productId 상품 ID
@@ -97,5 +54,17 @@ public class CatalogService {
                                 Map.of("productId", productId)
                         )
                 ));
+    }
+
+    /**
+     * 특정 상품의 모든 옵션 조회 + with 재고 정보
+     *
+     * @param productId 상품 ID
+     */
+    public List<CatalogDto.VariantInfo> getVariantInfos(Long productId) {
+        Map<Long, Integer> stocks = inventoryClient
+                .findStockInfosByProductId(productId);
+
+        return catalogTxService.getVariantInfos(productId, stocks);
     }
 }

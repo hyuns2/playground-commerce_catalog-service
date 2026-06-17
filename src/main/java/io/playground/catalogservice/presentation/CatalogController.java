@@ -28,7 +28,7 @@ public class CatalogController {
     @GetMapping("/variants")
     public ResponseEntity<List<CatalogDto.VariantInfo>> getVariants(@RequestParam Long productId) {
         return ResponseEntity.ok().body(
-                catalogService.getVariants(productId)
+                catalogService.getVariantInfos(productId)
         );
     }
 
