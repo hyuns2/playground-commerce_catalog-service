@@ -10,13 +10,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductJpaRepository extends JpaRepository<ProductEntity, Long> {
-    @Query("SELECT new io.playground.catalogservice.application.dto.ProductSearchResult(" +
-                    "p.id, p.name, MIN(v.price), p.description) " +
-                "FROM ProductEntity p " +
-                "JOIN VariantEntity v ON p = v.product " +
-            "WHERE p.status = :status AND " +
-                "LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "GROUP BY p.id")
+    @Query(value= """
+            SELECT p.id AS id, p.name AS name, p.min_price AS minPrice, p.description AS description
+            FROM products p
+            WHERE p.status = 'AVAILABLE'
+              AND MATCH(p.name) AGAINST(CONCAT('+' + :keyword) IN BOOLEAN MODE)
+            GROUP BY
+                p.id
+    """, nativeQuery = true)
     List<ProductSearchResult> findSearchResultByStatusEqualsAndKeyword(Product.ProductStatus status,
                                                                        String keyword,
                                                                        Pageable pageable);

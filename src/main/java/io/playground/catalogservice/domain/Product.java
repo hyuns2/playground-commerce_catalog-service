@@ -3,6 +3,8 @@ package io.playground.catalogservice.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.math.BigDecimal;
+
 @Getter
 @AllArgsConstructor
 public class Product {
@@ -16,6 +18,8 @@ public class Product {
 
     private String detail;
 
+    private BigDecimal minPrice;
+
     public enum ProductStatus {
         AVAILABLE,
         UNAVAILABLE,
@@ -26,7 +30,8 @@ public class Product {
                              ProductStatus status,
                              String name,
                              String description,
-                             String detail) {
-        return new Product(id, status, name, description, detail);
+                             String detail,
+                             BigDecimal minPrice) {
+        return new Product(id, status, name, description, detail, minPrice);
     }
 }
