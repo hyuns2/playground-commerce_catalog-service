@@ -1,4 +1,4 @@
-package io.playground.catalogservice.infrastructure.persistence;
+package io.playground.catalogservice.infrastructure.persistence.entity;
 
 import io.playground.catalogservice.domain.Product;
 import jakarta.persistence.*;
