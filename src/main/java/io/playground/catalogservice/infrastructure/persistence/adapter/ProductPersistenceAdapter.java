@@ -1,10 +1,10 @@
-package io.playground.catalogservice.infrastructure.persistence;
+package io.playground.catalogservice.infrastructure.persistence.adapter;
 
-import io.playground.catalogservice.application.dto.ProductSearchResult;
+import io.playground.catalogservice.application.dto.CatalogDto;
 import io.playground.catalogservice.application.port.ProductPersistencePort;
 import io.playground.catalogservice.domain.Product;
+import io.playground.catalogservice.infrastructure.persistence.repository.ProductJpaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,12 +16,23 @@ public class ProductPersistenceAdapter implements ProductPersistencePort {
     private final ProductJpaRepository productRepository;
 
     @Override
-    public List<ProductSearchResult> searchAvailableProducts(String keyword, int page, int size) {
+    public List<CatalogDto.ProductSearchResult> searchAvailableProducts(String keyword,
+                                                                        int page,
+                                                                        int size) {
         return productRepository.findSearchResultByStatusEqualsAndKeyword(
-                Product.ProductStatus.AVAILABLE,
+                Product.ProductStatus.AVAILABLE.name(),
                 keyword.replace("\"", ""),
-                PageRequest.of(page, size)
-        );
+                size,
+                page * size
+        ).stream()
+                .map(result ->
+                        CatalogDto.ProductSearchResult.builder()
+                                    .id(result.getId())
+                                    .name(result.getName())
+                                    .minPrice(result.getMinPrice())
+                                    .description(result.getDescription())
+                                    .build()
+                ).toList();
     }
 
     @Override

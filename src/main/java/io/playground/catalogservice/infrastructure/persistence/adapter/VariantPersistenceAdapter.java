@@ -1,8 +1,10 @@
-package io.playground.catalogservice.infrastructure.persistence;
+package io.playground.catalogservice.infrastructure.persistence.adapter;
 
 import io.playground.catalogservice.application.dto.Snapshot;
 import io.playground.catalogservice.application.port.VariantPersistencePort;
 import io.playground.catalogservice.domain.Variant;
+import io.playground.catalogservice.infrastructure.persistence.entity.VariantEntity;
+import io.playground.catalogservice.infrastructure.persistence.repository.VariantJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

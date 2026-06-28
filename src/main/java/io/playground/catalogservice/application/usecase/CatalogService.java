@@ -1,13 +1,13 @@
 package io.playground.catalogservice.application.usecase;
 
 import io.playground.catalogservice.application.dto.CatalogDto;
-import io.playground.catalogservice.application.dto.ProductSearchResult;
 import io.playground.catalogservice.application.port.InventoryClientPort;
 import io.playground.catalogservice.application.port.ProductPersistencePort;
 import io.playground.catalogservice.exception.BusinessDetailException;
 import io.playground.catalogservice.exception.BusinessErrorCode;
 import io.playground.catalogservice.infrastructure.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +32,9 @@ public class CatalogService {
      * @param page 페이지 번호
      */
     @Transactional(readOnly = true)
-    public List<ProductSearchResult> searchProducts(String keyword,
-                                                    int page) {
+    @Cacheable(cacheNames = "catalog", key = "'keyword:' + #keyword + ':page:' + #page")
+    public List<CatalogDto.ProductSearchResult> searchProducts(String keyword,
+                                                               int page) {
         return productPersistence
                 .searchAvailableProducts(
                         keyword, page, PAGE_SIZE
@@ -46,6 +47,7 @@ public class CatalogService {
      * @param productId 상품 ID
      */
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "catalog", key = "'product:' + #productId + ':detail:'")
     public String getDetail(Long productId) {
         return productPersistence.findDetailById(productId)
                 .orElseThrow(() -> new BusinessDetailException(
@@ -61,10 +63,27 @@ public class CatalogService {
      *
      * @param productId 상품 ID
      */
+    @Cacheable(cacheNames = "catalog-client", key = "'product:' + #productId + ':variant-infos:'")
     public List<CatalogDto.VariantInfo> getVariantInfos(Long productId) {
         Map<Long, Integer> stocks = inventoryClient
                 .findStockInfosByProductId(productId);
 
         return catalogTxService.getVariantInfos(productId, stocks);
+    }
+
+    /**
+     * 특정 상품의 모든 옵션만 조회 -> 핫딜 전용
+     *
+     * @param productId 상품 ID
+     */
+    @Cacheable(cacheNames = "catalog", key = "'product:' + #productId + ':variants:'")
+    public List<CatalogDto.VariantInfo> getVariants(Long productId) {
+        return catalogTxService.getVariants(productId).stream()
+                .map(variant ->
+                        CatalogDto.VariantInfo.from(
+                                variant,
+                                null
+                        )
+                ).toList();
     }
 }

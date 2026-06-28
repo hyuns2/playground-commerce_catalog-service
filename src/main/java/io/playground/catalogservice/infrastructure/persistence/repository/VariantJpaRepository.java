@@ -1,6 +1,7 @@
-package io.playground.catalogservice.infrastructure.persistence;
+package io.playground.catalogservice.infrastructure.persistence.repository;
 
 import io.playground.catalogservice.application.dto.Snapshot;
+import io.playground.catalogservice.infrastructure.persistence.entity.VariantEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

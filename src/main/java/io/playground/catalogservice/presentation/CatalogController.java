@@ -1,7 +1,6 @@
 package io.playground.catalogservice.presentation;
 
 import io.playground.catalogservice.application.dto.CatalogDto;
-import io.playground.catalogservice.application.dto.ProductSearchResult;
 import io.playground.catalogservice.application.usecase.CatalogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,18 +16,11 @@ public class CatalogController {
     private final CatalogService catalogService;
 
     @GetMapping("/search")
-    public ResponseEntity<List<ProductSearchResult>> searchProductsByKeyword(@RequestParam String keyword,
-                                                                             @RequestParam int page) {
+    public ResponseEntity<List<CatalogDto.ProductSearchResult>> searchProductsByKeyword(@RequestParam String keyword,
+                                                                                        @RequestParam int page) {
         return ResponseEntity.ok().body(
                 catalogService
                         .searchProducts(keyword, page)
-        );
-    }
-
-    @GetMapping("/variants")
-    public ResponseEntity<List<CatalogDto.VariantInfo>> getVariants(@RequestParam Long productId) {
-        return ResponseEntity.ok().body(
-                catalogService.getVariantInfos(productId)
         );
     }
 
@@ -36,6 +28,20 @@ public class CatalogController {
     public ResponseEntity<String> getDetail(@RequestParam Long productId) {
         return ResponseEntity.ok(
                 catalogService.getDetail(productId)
+        );
+    }
+
+    @GetMapping("/variant-infos")
+    public ResponseEntity<List<CatalogDto.VariantInfo>> getVariantInfos(@RequestParam Long productId) {
+        return ResponseEntity.ok().body(
+                catalogService.getVariantInfos(productId)
+        );
+    }
+
+    @GetMapping("/variants")
+    public ResponseEntity<List<CatalogDto.VariantInfo>> getVariants(@RequestParam Long productId) {
+        return ResponseEntity.ok().body(
+                catalogService.getVariants(productId)
         );
     }
 }

@@ -28,7 +28,9 @@ spring:
   sql:
     init:
       mode: ${SQL_INIT_MODE}
-      data-locations: classpath:data.sql
+      data-locations:
+        - classpath:data.sql
+        - classpath:index.sql
 
   data:
     redis:
@@ -51,8 +53,8 @@ logging:
 #    org.hibernate.SQL: DEBUG
 #    org.hibernate.orm.jdbc.bind: TRACE
 
-    org.apache.kafka: WARN
-    org.springframework.kafka: WARN
+    org.apache.kafka: ERROR
+    org.springframework.kafka: ERROR
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n"
 

@@ -53,4 +53,20 @@ public class CatalogTxService {
                         )
                 ).toList();
     }
+
+    @Transactional(readOnly = true)
+    public List<Variant> getVariants(Long productId) {
+        List<Variant> variants = variantPersistence
+                .findAllByProductId(productId);
+
+        if (variants.isEmpty())
+            throw new BusinessDetailException(
+                    BusinessErrorCode.PRODUCT_NOT_FOUND,
+                    jsonUtil.toJson(
+                            Map.of("productId", productId)
+                    )
+            );
+
+        return variants;
+    }
 }
