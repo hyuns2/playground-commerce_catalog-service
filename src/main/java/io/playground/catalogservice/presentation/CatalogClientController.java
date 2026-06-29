@@ -23,4 +23,11 @@ public class CatalogClientController {
                 catalogClientService.getSnapshots(variantIds)
         );
     }
+
+    @GetMapping("/hot")
+    public ResponseEntity<List<Snapshot>> getHotSnapshots(@RequestParam List<Long> variantIds) {
+        return ResponseEntity.ok().body(
+                catalogClientService.getHotSnapshots(variantIds)
+        );
+    }
 }

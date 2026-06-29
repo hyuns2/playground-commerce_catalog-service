@@ -1,12 +1,14 @@
 package io.playground.catalogservice.application.usecase;
 
 import io.playground.catalogservice.application.dto.CatalogDto;
+import io.playground.catalogservice.application.dto.Snapshot;
 import io.playground.catalogservice.application.port.VariantPersistencePort;
 import io.playground.catalogservice.domain.Variant;
 import io.playground.catalogservice.exception.BusinessDetailException;
 import io.playground.catalogservice.exception.BusinessErrorCode;
 import io.playground.catalogservice.infrastructure.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,5 +70,17 @@ public class CatalogTxService {
             );
 
         return variants;
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "catalog-client", key = "'variant:' + #variantId + ':snapshot:'")
+    public Snapshot getHotSnapshot(Long variantId) {
+        return variantPersistence.findSnapshotById(variantId)
+                .orElseThrow(() -> new BusinessDetailException(
+                        BusinessErrorCode.VARIANT_NOT_FOUND,
+                        jsonUtil.toJson(
+                                Map.of("variantId", variantId)
+                        )
+                ));
     }
 }

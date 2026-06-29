@@ -16,6 +16,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CatalogClientService {
     private final VariantPersistencePort variantPersistence;
+    private final CatalogTxService catalogTxService;
     private final JsonUtil jsonUtil;
 
     /**
@@ -43,5 +44,23 @@ public class CatalogClientService {
             );
 
         return snapshots;
+    }
+
+    /**
+     * 옵션별로 상품&옵션 정보 스냅샷 조회
+     *
+     * @param variantIds {옵션 ID} 리스트
+     */
+    @Transactional(readOnly = true)
+    public List<Snapshot> getHotSnapshots(List<Long> variantIds) {
+        if (variantIds.size() != 1)
+            throw new BusinessDetailException(
+                    BusinessErrorCode.BAD_SNAPSHOT_REQUEST,
+                    "NOT_SINGLE_VARIANT_ID"
+            );
+
+        return List.of(
+                catalogTxService.getHotSnapshot(variantIds.get(0))
+        );
     }
 }

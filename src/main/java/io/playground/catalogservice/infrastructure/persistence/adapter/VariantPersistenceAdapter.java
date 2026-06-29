@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -21,6 +22,12 @@ public class VariantPersistenceAdapter implements VariantPersistencePort {
                 .findAllByProductId(productId).stream()
                 .map(VariantEntity::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Optional<Snapshot> findSnapshotById(Long id) {
+        return variantRepository
+                .findSnapshotById(id);
     }
 
     @Override

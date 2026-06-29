@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum BusinessErrorCode {
     // 400
     VARIANT_STOCK_MISMATCH("COMMERCE-400:001", "상품 옵션과 재고 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+    BAD_SNAPSHOT_REQUEST("COMMERCE-400:002", "잘못된 스냅샷 요청입니다.", HttpStatus.BAD_REQUEST),
 
     // 401
 
